@@ -5,16 +5,40 @@ public class SuvArrays {
     private int[] data;
 
     public SuvArrays(int[] data) {
-        this.data = data;
+        this.data = data.clone();
     }
 
     public void setData(int[] data) {
-        this.data = data;
+        this.data = data.clone();
+    }
+
+    public void displayData() {
+        System.out.println("\n-----Data-----");
+        for(int i: data) {
+            System.out.print(i + ",");
+        }
     }
 
     // Sort the internal array using quicksort
-    public void quickSort() {
+    public void quickSort(boolean verbose) {
+        long startTime = System.nanoTime();
         quickSortHelper(0, data.length - 1);
+        long endTime = System.nanoTime();
+        
+        if (verbose) {
+            System.out.println("\n<Debug> Quicksort execution time: " + (endTime - startTime) + " ns");
+        }
+    }
+
+    // Sort the internal array using mergesort
+    public void mergeSort(boolean verbose) {
+        long startTime = System.nanoTime();
+        mergeSortHelper(0, data.length-1);
+        long endTime = System.nanoTime();
+
+        if (verbose) {
+            System.out.println("\n<Debug> Mergesort execution time: " + (endTime - startTime) + " ns");
+        }
     }
 
     private void quickSortHelper(int p, int r) {
@@ -44,10 +68,40 @@ public class SuvArrays {
         return i;
     }
 
-    public void displayData() {
-        System.out.println("\n-----Data-----\n");
-        for(int i: data) {
-            System.out.print(i + ",");
+    private void mergeSortHelper(int p, int r) {
+        if (p < r) {
+            int q = (p + r) / 2;
+            mergeSortHelper(p, q);
+            mergeSortHelper(q+1, r);
+            merge(p, q, r);
+        }
+    }
+    
+    private void merge(int p, int q, int r) {
+        int[] scratchPad = new int[r - p + 1];
+        int leftIndex = p;
+        int rightIndex = q+1;
+        int index = 0;
+
+        while(leftIndex <= q && rightIndex <= r) {
+            if (data[leftIndex] <= data[rightIndex]) {
+                scratchPad[index++] = data[leftIndex++];
+            }
+            else {
+                scratchPad[index++] = data[rightIndex++];
+            }
+        }
+
+        while (leftIndex <= q) {
+            scratchPad[index++] = data[leftIndex++];
+        }
+
+        while (rightIndex <= r) {
+            scratchPad[index++] = data[rightIndex++];
+        }
+
+        for(int i=0; i<scratchPad.length; i++) {
+            data[p+i] = scratchPad[i];
         }
     }
 }
